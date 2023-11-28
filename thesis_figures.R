@@ -119,7 +119,7 @@ TN_freeze_plot <- neg_2_days %>%
   ggplot(aes(x = year, y = total_days)) +
   geom_point(color="black") +
   geom_smooth(method="lm")+
-  labs(y= "Number of Days",
+  labs(y= "Number of Days below -2°C",
        x= "Year") + 
   theme_bw(base_size = 18)+
   theme(panel.border = element_blank(), 
@@ -150,7 +150,7 @@ last_neg_2 <- ggplot(last_freeze, aes(x=year, y=julian_date))+
   geom_smooth(method="lm")+
   scale_y_continuous(limits = c(40, 125),
                      breaks=seq(40, 125,by=10))+
-  labs(y= "Julian Date",
+  labs(y= "Julian Date of last -2°C",
        x= "Year") + 
   theme_bw(base_size = 18)+
   theme(panel.border = element_blank(),  
@@ -196,7 +196,7 @@ maple_phenology<-ggplot(data=subset(phenology, species=="Acer saccharum"), aes(x
         legend.background = element_blank(),
         legend.box.background = element_blank(),legend.spacing.y = unit(0, "cm"),
         legend.position=c("0.08","0.5"))+
-  annotate("text", x=40,y=4.5,label= expression(italic("Acer saccharum")), hjust=0, size=5)
+  annotate("text", x=40,y=4.5,label= expression("Sugar maple"), hjust=0, size=5)
 
 maple_phenology
 
@@ -215,7 +215,7 @@ beech_phenology<-ggplot(data=subset(phenology, species=="Fagus grandifolia"), ae
         panel.background = element_blank(),
         axis.line = element_line(colour = "black"),
         text=element_text(size=14))+
-  annotate("text", x=40,y=4,label= expression(italic("Fagus grandifolia")), hjust=0, size=5)
+  annotate("text", x=40,y=4,label= expression("American beech"), hjust=0, size=5)
 
 beech_phenology
 
@@ -234,7 +234,7 @@ poplar_phenology<-ggplot(data=subset(phenology, species=="Liriodendron tulipifer
         panel.background = element_blank(),
         axis.line = element_line(colour = "black"),
         text=element_text(size=14))+
-  annotate("text", x=40,y=4.5,label= expression(italic("Liriodendron tulipifera")), hjust=0, size=5)
+  annotate("text", x=40,y=4.5,label= expression("Tulip poplar"), hjust=0, size=5)
 
 poplar_phenology
 
@@ -466,12 +466,12 @@ mean(mean_TMAX$abs_TMAX)
 #create plot for record high by year
 record_TMAX_plot <- ggplot(TN_TMAX, aes(x=year, y= abs_TMAX))+
   geom_point()+
-  geom_hline(yintercept = 36.58824, color= "red", linewidth = 1.25)+ #mean summer TMAX
+  #geom_hline(yintercept = 36.58824, color= "red", linewidth = 1.25)+ #mean summer TMAX
   scale_y_continuous(limits = c(33, 44),
                      breaks=seq(32,45,by=2),
                      minor_breaks = seq(32, 45, 1)) +
   labs(
-    y= "Temperature °C",
+    y= "Highest Temperature °C",
     x= "Year")+
   theme_bw(base_size = 18)+
   theme(panel.border = element_blank(), 
@@ -496,18 +496,15 @@ days_32 <- tenn1980 %>%
 #plot number of days above 32.2C
 days_32_plot <- ggplot(days_32, aes(x=year, y=number ))+
   geom_point() +
-  geom_hline(yintercept = 54.1, color= "red", linewidth = 1.25)+ #mean number of days above 32.2
+  #geom_hline(yintercept = 54.1, color= "red", linewidth = 1.25)+ #mean number of days above 32.2
   theme_bw(base_size = 18)+
   theme(panel.border = element_blank(), 
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.line = element_line(colour = "black"),
-        axis.title.x = element_blank(),
         axis.text.x=element_text(angle = 45, hjust = 1))+
-  labs(
-    #title = "c",
-    y= "Number of Days",
+  labs(y= "Number of Days >32.2°C",
     x= "Year")
 
 days_32_plot
@@ -562,6 +559,7 @@ Junec <- ggplot(tcrit%>%
   scale_x_discrete(limit=rev)+
   geom_errorbar(aes(ymax=Tcrit.uci,ymin=Tcrit.lci),width=0.5)+
   geom_hline(yintercept = 38.3, linetype = 3, color= "blue")+ #highest temp June 2022
+  annotate("text", x=5.75, y=37.5, label="Highest temp in June 2022", angle='90')+
   ylab("Critical Temperature (°C)")+
   xlab("Species")+
   ylim(30, 55)+
@@ -581,6 +579,7 @@ Juned <- ggplot(tcrit%>%
   scale_x_discrete(limit=rev)+
   geom_errorbar(aes(ymax=Tcrit.uci,ymin=Tcrit.lci),width=0.5)+
   geom_hline(yintercept = 42.8, linetype = 2, color= "orange")+ #record june high temp
+  annotate("text", x=5.75, y=42.3, label="Record June temp", angle='90')+
   ylab("Critical Temperature (°C)")+
   xlab("Species")+
   ylim(30, 55)+
@@ -617,7 +616,7 @@ June2022 <- ggplot(tcrit%>%
   coord_flip()+
   #geom_image has to come first so it is drawn behind everything else, that way if white space is in image,
   #it doesn't show up
-  geom_image(data=subset(leaf_max_temp, year=="2022"), aes(y=leaf_temp, x=species,image=location),size=0.05)+
+  geom_image(data=subset(leaf_max_temp, year=="2022"), aes(y=leaf_temp, x=id,image=location),size=0.05)+
   geom_point()+
   scale_x_discrete(limit=rev)+
   geom_errorbar(aes(ymax=Tcrit.uci,ymin=Tcrit.lci),width=0.5)+
@@ -644,7 +643,7 @@ June2022 <- ggplot(tcrit%>%
   coord_flip()+
   #geom_image has to come first so it is drawn behind everything else, that way if white space is in image,
   #it doesn't show up
-  geom_image(data=subset(leaf_max_temp, year=="2022"), aes(y=leaf_temp, x=species,image=location),size=0.05)+
+  geom_image(data=subset(leaf_max_temp, year=="2022"), aes(y=leaf_temp, x=id,image=location),size=0.05)+
   geom_point()+
   scale_x_discrete(limit=rev)+
   geom_errorbar(aes(ymax=Tcrit.uci,ymin=Tcrit.lci),width=0.5)+
@@ -662,7 +661,7 @@ June2022
 July2022 <- ggplot(tcrit%>%
                      filter(year==2022,month==7), aes(y= Tcrit.mn, x= id)) +
   coord_flip()+
-  geom_image(data=subset(leaf_max_temp, year=="2022"), aes(y=leaf_temp, x=species,image=location),size=0.05)+
+  geom_image(data=subset(leaf_max_temp, year=="2022"), aes(y=leaf_temp, x=id,image=location),size=0.05)+
   geom_point()+
   scale_x_discrete(limit=rev)+
   geom_errorbar(aes(ymax=Tcrit.uci,ymin=Tcrit.lci),width=0.5)+
@@ -681,7 +680,7 @@ July2022
 June2023 <- ggplot(tcrit%>%
                      filter(year==2023,month==6), aes(y= Tcrit.mn, x= id)) +
   coord_flip()+
-  geom_image(data=subset(leaf_max_temp, year=="2023"), aes(y=leaf_temp, x=species,image=location),size=0.05)+
+  geom_image(data=subset(leaf_max_temp, year=="2023"), aes(y=leaf_temp, x=id,image=location),size=0.05)+
   geom_point()+
   scale_x_discrete(limit=rev)+
   geom_errorbar(aes(ymax=Tcrit.uci,ymin=Tcrit.lci),width=0.5)+
@@ -700,7 +699,7 @@ June2023
 July2023 <- ggplot(tcrit%>%
                      filter(year==2023,month==7), aes(y= Tcrit.mn, x= id)) +
   coord_flip()+
-  geom_image(data=subset(leaf_max_temp, year=="2023"), aes(y=leaf_temp, x=species,image=location),size=0.05)+
+  geom_image(data=subset(leaf_max_temp, year=="2023"), aes(y=leaf_temp, x=id,image=location),size=0.05)+
   geom_point()+
   geom_errorbar(aes(ymax=Tcrit.uci,ymin=Tcrit.lci),width=0.5)+
   scale_x_discrete(limit=rev)+
