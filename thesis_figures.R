@@ -121,7 +121,7 @@ TN_freeze_plot <- neg_2_days %>%
   geom_smooth(method="lm")+
   labs(y= "Number of Days below -2°C",
        x= "Year") + 
-  theme_bw(base_size = 18)+
+  theme_bw(base_size = 10)+
   theme(panel.border = element_blank(), 
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
@@ -131,6 +131,7 @@ TN_freeze_plot <- neg_2_days %>%
 
 TN_freeze_plot
 
+ggsave(filename="Figure1.tiff", plot=TN_freeze_plot, device= "tiff", units="cm", width = 8.23, height = 5.49, dpi=600)
 
 # # # # # # # # # # # 
 ## Last -2 by year----
@@ -185,18 +186,20 @@ maple_phenology<-ggplot(data=subset(phenology, species=="Acer saccharum"), aes(x
   labs(x="", y="", colour = "Year")+
   scale_color_manual(values = c("2022" = "darkorange", "2023" = "darkgreen"))+
   ylim(-1, 5)+
-  theme_bw(base_size = 18)+
+  theme_bw(base_size = 10)+
   theme(axis.title.x = element_markdown())+
   theme(panel.border = element_blank(), 
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.line = element_line(colour = "black"),
-        text=element_text(size=14),
+        text=element_text(size=10),
         legend.background = element_blank(),
         legend.box.background = element_blank(),legend.spacing.y = unit(0, "cm"),
-        legend.position=c("0.08","0.5"))+
-  annotate("text", x=40,y=4.5,label= expression("Sugar maple"), hjust=0, size=5)
+        legend.position=c("0.08","0.5"),
+        legend.title = element_text(size = 4), 
+        legend.text = element_text(size = 4))+
+  annotate("text", x=40,y=4.5,label= expression("Acer saccharum"), hjust=0, size=3)
 
 maple_phenology
 
@@ -207,15 +210,15 @@ beech_phenology<-ggplot(data=subset(phenology, species=="Fagus grandifolia"), ae
   labs(x="", y="Phenology Code", colour = "Year")+
   scale_color_manual(values = c("2022" = "darkorange", "2023" = "darkgreen"))+
   ylim(-1, 5)+
-  theme_bw(base_size = 18)+
+  theme_bw(base_size = 10)+
   theme(legend.position="none")+
   theme(panel.border = element_blank(), 
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.line = element_line(colour = "black"),
-        text=element_text(size=14))+
-  annotate("text", x=40,y=4,label= expression("American beech"), hjust=0, size=5)
+        text=element_text(size=10))+
+  annotate("text", x=40,y=4,label= expression("Fagus grandifolia"), hjust=0, size=3)
 
 beech_phenology
 
@@ -226,20 +229,21 @@ poplar_phenology<-ggplot(data=subset(phenology, species=="Liriodendron tulipifer
   labs(x="Julian Date", y="", colour = "Year")+
   scale_color_manual(values = c("2022" = "darkorange", "2023" = "darkgreen"))+
   ylim(-1, 5)+
-  theme_bw(base_size = 18)+
+  theme_bw(base_size = 10)+
   theme(legend.position="none")+
   theme(panel.border = element_blank(), 
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.line = element_line(colour = "black"),
-        text=element_text(size=14))+
-  annotate("text", x=40,y=4.5,label= expression("Tulip poplar"), hjust=0, size=5)
+        text=element_text(size=10))+
+  annotate("text", x=40,y=4.5,label= expression("Liriodendron tulipifera"), hjust=0, size=3)
 
 poplar_phenology
 
-grid.arrange(maple_phenology, beech_phenology, poplar_phenology, nrow=3)
+Figure2 <- grid.arrange(maple_phenology, beech_phenology, poplar_phenology, nrow=3)
 
+ggsave(filename="Figure2.tiff", plot=Figure2, device= "tiff", units="cm", width = 12.5, height = 9.37, dpi=600)
 
 # # # # # # # # # # # #
 ## LT50 plots series----
@@ -273,6 +277,53 @@ TMIN_2022$year="2022"
 TMIN_2023$year="2023"
 new<-rbind(jdate_TMIN,TMIN_2022,TMIN_2023)
 
+plot2022 <-ggplot() +
+  geom_point(data=subset(dbl_panel, year=="2022"), aes(x = julian_date, y=LT50mod, color= Species), position = position_dodge(width = 2))+
+  geom_errorbar(data=subset(dbl_panel, year=="2022"), aes(x= julian_date, ymax=LT50mod+LT50mod_se,ymin=LT50mod-LT50mod_se, color= Species), width= 2, position = position_dodge(width = 2))+
+  geom_line(data=subset(new,year!="2023"), aes(x=julian_date, y=absol_TMIN, group=year,linetype=year))+
+  scale_color_manual(values = c("Acer saccharum" = "red", "Liriodendron tulipifera" = "blue", "Fagus grandifolia" = "black"))+
+  scale_linetype_manual("Minimum temperature",values = c("2022"=1,"1980"=2),labels=c("Since 1980","2022"))+
+  xlim(40,130) +
+  ylim(-20,10)+
+  labs(y=expression("LT"["50"]/"Temperature (°C)"))+
+  xlab("Julian Date")+
+  theme_bw(base_size = 10)+
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"),
+        axis.title.x = element_blank(),
+        axis.text.x=element_blank(),
+        legend.position = 'none')+
+  ggtitle(2022)
+
+plot2023 <-ggplot() +
+  geom_point(data=subset(dbl_panel, year=="2023"), aes(x = julian_date, y=LT50mod, color= Species), position = position_dodge(width = 2))+
+  geom_errorbar(data=subset(dbl_panel, year=="2023"), aes(x= julian_date, ymax=LT50mod+LT50mod_se,ymin=LT50mod-LT50mod_se, color= Species), width = 2, position = position_dodge(width = 2))+
+  geom_line(data=subset(new,year!="2022"), aes(x=julian_date, y=absol_TMIN, group=year,linetype=year))+
+  scale_linetype_manual("Minimum temperature",values = c("2023"=1,"1980"=2),labels=c("Since 1980","2023"))+
+  scale_color_manual(values = c("Acer saccharum" = "red", "Liriodendron tulipifera" = "blue", "Fagus grandifolia" = "black"),guide="none")+
+  xlim(40,130) +
+  ylim(-20,10)+
+  labs(y=expression("LT"["50"]/"Temperature (°C)"))+
+  xlab("Julian Date")+
+  theme_bw(base_size = 10)+
+  theme(axis.title.x = element_markdown())+
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"),
+        legend.position = 'none')+
+  ggtitle(2023)
+
+Figure3 <- grid.arrange(plot2022, plot2023,nrow=2)
+
+ggsave(filename="Figure3.tiff", plot=Figure3, device= "tiff", units="cm", width = 12.5, height = 9.37, dpi=600)
+
+
+##Plots for presentations
 plot22 <-ggplot()+
   geom_line(data=subset(new,year!="2023"), aes(x=julian_date, y=absol_TMIN, group=year,linetype=year))+
   scale_color_manual(values = c("Acer saccharum" = "red", "Liriodendron tulipifera" = "blue", "Fagus grandifolia" = "black"))+
